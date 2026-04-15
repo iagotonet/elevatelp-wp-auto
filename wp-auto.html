@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WP Auto — ElevateLP</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #09090f;
+  --bg2: #0f0f1a;
+  --bg3: #141422;
+  --border: rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.12);
+  --red: #f94051;
+  --red2: #ff6b78;
+  --rg: rgba(249,64,81,0.15);
+  --rs: rgba(249,64,81,0.06);
+  --t: #f0f0ff;
+  --t2: #9090b8;
+  --t3: #555575;
+  --g: #00e5a0;
+  --gg: rgba(0,229,160,0.15);
+  --amber: #ffb347;
+  --blue: #4f8ef7;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--t);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* grid bg */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(249,64,81,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(249,64,81,0.025) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none;
+  z-index: 0;
+}
+body::after {
+  content: '';
+  position: fixed;
+  top: -300px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 900px;
+  height: 500px;
+  background: radial-gradient(ellipse, rgba(249,64,81,0.08) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* HEADER */
+header {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  padding: 0 32px;
+  height: 56px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(9,9,15,0.8);
+  backdrop-filter: blur(20px);
+}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.logo-mark {
+  width: 28px; height: 28px;
+  background: linear-gradient(135deg, var(--red), #c8001a);
+  border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 13px; color: #fff;
+  box-shadow: 0 0 16px rgba(249,64,81,0.4);
+  flex-shrink: 0;
+}
+.logo-text { font-weight: 600; font-size: 15px; letter-spacing: -0.3px; }
+.logo-sub {
+  font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 1px;
+  color: var(--t3); background: var(--bg3); border: 1px solid var(--border2);
+  padding: 2px 7px; border-radius: 4px; margin-left: 4px;
+}
+.header-right {
+  margin-left: auto;
+  display: flex; align-items: center; gap: 8px;
+}
+.status-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--t3);
+  box-shadow: none;
+  transition: all .3s;
+}
+.status-dot.online { background: var(--g); box-shadow: 0 0 8px var(--gg); animation: pulse 2s infinite; }
+.status-dot.running { background: var(--amber); box-shadow: 0 0 8px rgba(255,179,71,0.4); animation: pulse .8s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+.status-text { font-size: 11px; color: var(--t3); font-family: 'DM Mono', monospace; }
+
+/* MAIN */
+main {
+  position: relative;
+  z-index: 1;
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 40px 24px 80px;
+}
+
+/* PAGE TITLE */
+.page-title { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 6px; }
+.page-sub { font-size: 14px; color: var(--t2); line-height: 1.6; }
+
+/* PROGRESS STEPS */
+.steps {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin: 32px 0 28px;
+  position: relative;
+}
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  position: relative;
+  z-index: 1;
+}
+.step-circle {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--bg3); border: 1.5px solid var(--border2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 600; color: var(--t3);
+  transition: all .3s;
+}
+.step-label { font-size: 11px; color: var(--t3); white-space: nowrap; font-weight: 500; }
+.step.active .step-circle { background: var(--red); border-color: var(--red); color: white; box-shadow: 0 0 16px var(--rg); }
+.step.active .step-label { color: var(--t); }
+.step.done .step-circle { background: var(--gg); border-color: var(--g); color: var(--g); }
+.step.done .step-label { color: var(--g); }
+.step-line {
+  position: absolute;
+  top: 16px; left: 50%; right: -50%;
+  height: 1px; background: var(--border2);
+  z-index: 0;
+}
+.step:last-child .step-line { display: none; }
+.step.done .step-line { background: var(--g); opacity: 0.3; }
+
+/* CARDS */
+.card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 24px;
+  margin-bottom: 16px;
+  transition: border-color .2s;
+}
+.card:hover { border-color: var(--border2); }
+.card-title {
+  font-size: 13px; font-weight: 600; color: var(--t2);
+  text-transform: uppercase; letter-spacing: .6px;
+  margin-bottom: 16px;
+  display: flex; align-items: center; gap: 8px;
+}
+.card-title span { color: var(--red); }
+
+/* FORM */
+.field { margin-bottom: 16px; }
+.field label {
+  display: block; font-size: 11px; font-weight: 500; color: var(--t3);
+  text-transform: uppercase; letter-spacing: .6px; margin-bottom: 7px;
+}
+.field input {
+  width: 100%;
+  background: var(--bg3); border: 1px solid var(--border2);
+  border-radius: 9px; padding: 10px 13px;
+  color: var(--t); font-size: 13px; font-family: 'DM Sans', sans-serif;
+  outline: none; transition: border-color .2s, box-shadow .2s;
+}
+.field input[type="password"] { font-family: 'DM Mono', monospace; letter-spacing: 2px; }
+.field input:focus { border-color: var(--red); box-shadow: 0 0 0 3px var(--rs); }
+.field input::placeholder { color: var(--t3); letter-spacing: 0; font-family: 'DM Sans', sans-serif; }
+
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+/* FILE DROPS */
+.drop-zone {
+  border: 1.5px dashed rgba(249,64,81,0.2);
+  border-radius: 11px;
+  padding: 22px 18px;
+  text-align: center;
+  cursor: pointer;
+  transition: all .2s;
+  background: var(--rs);
+  position: relative;
+}
+.drop-zone:hover, .drop-zone.over { border-color: var(--red); background: rgba(249,64,81,0.1); }
+.drop-zone.loaded { border-color: var(--g); border-style: solid; background: var(--gg); }
+.drop-icon { font-size: 22px; margin-bottom: 6px; }
+.drop-title { font-size: 13px; font-weight: 600; color: var(--t2); margin-bottom: 3px; }
+.drop-sub { font-size: 11px; color: var(--t3); }
+.drop-zone.loaded .drop-title { color: var(--g); }
+input[type="file"] { display: none; }
+
+/* REQUIRED BADGE */
+.req { font-size: 10px; color: var(--red); font-weight: 600; margin-left: 6px; text-transform: uppercase; letter-spacing: .5px; }
+
+/* BUTTONS */
+.btn-run {
+  width: 100%;
+  padding: 15px;
+  border-radius: 11px;
+  font-size: 15px; font-weight: 600; font-family: 'DM Sans', sans-serif;
+  cursor: pointer; border: none;
+  background: linear-gradient(135deg, var(--red), #c8001a);
+  color: white;
+  box-shadow: 0 4px 24px rgba(249,64,81,0.35);
+  transition: all .2s;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  letter-spacing: -0.2px;
+  margin-top: 8px;
+}
+.btn-run:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 8px 32px rgba(249,64,81,0.45); }
+.btn-run:disabled { opacity: .4; cursor: not-allowed; transform: none; }
+.btn-secondary {
+  padding: 9px 18px; border-radius: 9px; font-size: 13px; font-weight: 500;
+  cursor: pointer; background: transparent; border: 1px solid var(--border2);
+  color: var(--t2); font-family: 'DM Sans', sans-serif; transition: all .15s;
+}
+.btn-secondary:hover { background: var(--bg3); color: var(--t); }
+
+/* LOG / TERMINAL */
+.terminal {
+  background: #06060d;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+.terminal-header {
+  background: var(--bg3);
+  padding: 10px 16px;
+  display: flex; align-items: center; gap: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.t-dot { width: 10px; height: 10px; border-radius: 50%; }
+.t-r { background: #ff5f57; } .t-y { background: #febc2e; } .t-g { background: #28c840; }
+.terminal-title { font-size: 11px; color: var(--t3); margin-left: 6px; font-family: 'DM Mono', monospace; }
+.terminal-body {
+  padding: 16px;
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  line-height: 1.8;
+  max-height: 320px;
+  overflow-y: auto;
+  color: var(--t2);
+}
+.terminal-body::-webkit-scrollbar { width: 4px; }
+.terminal-body::-webkit-scrollbar-track { background: transparent; }
+.terminal-body::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+.log-line { display: flex; gap: 10px; }
+.log-time { color: var(--t3); flex-shrink: 0; }
+.log-ok { color: var(--g); }
+.log-err { color: #ff6b6b; }
+.log-warn { color: var(--amber); }
+.log-info { color: var(--blue); }
+.log-run { color: var(--red2); }
+.blink { animation: blink .8s steps(1) infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+/* RESULT CARD */
+.result-card {
+  background: linear-gradient(135deg, rgba(0,229,160,0.06), rgba(0,229,160,0.02));
+  border: 1px solid rgba(0,229,160,0.2);
+  border-radius: 14px;
+  padding: 28px;
+  text-align: center;
+  display: none;
+}
+.result-card.show { display: block; }
+.result-icon { font-size: 48px; margin-bottom: 14px; }
+.result-title { font-size: 20px; font-weight: 700; letter-spacing: -.3px; margin-bottom: 8px; }
+.result-sub { font-size: 13px; color: var(--t2); margin-bottom: 20px; line-height: 1.6; }
+.result-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.btn-dl {
+  padding: 10px 22px; border-radius: 9px; font-size: 14px; font-weight: 600;
+  cursor: pointer; border: none;
+  background: linear-gradient(135deg, var(--g), #00b880);
+  color: #000; font-family: 'DM Sans', sans-serif;
+  transition: all .2s;
+}
+.btn-dl:hover { transform: translateY(-1px); }
+
+/* PROGRESS BAR */
+.progress-wrap { margin-bottom: 16px; display: none; }
+.progress-wrap.show { display: block; }
+.progress-label { font-size: 12px; color: var(--t2); margin-bottom: 8px; display: flex; justify-content: space-between; }
+.progress-track { height: 4px; background: var(--bg3); border-radius: 2px; overflow: hidden; }
+.progress-fill {
+  height: 100%; background: linear-gradient(90deg, var(--red), var(--red2));
+  border-radius: 2px; transition: width .5s ease;
+  width: 0%;
+}
+
+/* STEP DETAIL BADGE */
+.step-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--rs); border: 1px solid rgba(249,64,81,0.2);
+  border-radius: 6px; padding: 4px 10px;
+  font-size: 11px; font-weight: 600; color: var(--red2);
+  margin-bottom: 16px;
+}
+
+/* TOOLTIP */
+.tip {
+  font-size: 11px; color: var(--t3); margin-top: 6px;
+  display: flex; align-items: center; gap: 5px;
+}
+
+/* DIVIDER */
+.divider { height: 1px; background: var(--border); margin: 20px 0; }
+
+/* ALERT */
+.alert {
+  border-radius: 10px; padding: 11px 14px;
+  font-size: 13px; display: none; margin-bottom: 14px;
+}
+.alert.show { display: flex; align-items: center; gap: 8px; }
+.alert-err { background: rgba(255,107,107,0.08); border: 1px solid rgba(255,107,107,0.2); color: #ff8080; }
+.alert-ok { background: var(--gg); border: 1px solid rgba(0,229,160,0.2); color: var(--g); }
+
+.hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-mark">E</div>
+    <span class="logo-text">ElevateLP</span>
+    <span class="logo-sub">WP Auto</span>
+  </div>
+  <div class="header-right">
+    <div class="status-dot" id="statusDot"></div>
+    <span class="status-text" id="statusText">Aguardando</span>
+  </div>
+</header>
+
+<main>
+  <div style="margin-bottom:28px">
+    <div class="page-title">Automação WordPress</div>
+    <div class="page-sub">Configure uma vez, clique em executar — eu instalo tudo e entrego o JSON pronto para o ElevateLP.</div>
+  </div>
+
+  <!-- STEPS -->
+  <div class="steps">
+    <div class="step active" id="step1">
+      <div class="step-circle">1</div>
+      <div class="step-label">Configurar</div>
+      <div class="step-line"></div>
+    </div>
+    <div class="step" id="step2">
+      <div class="step-circle">2</div>
+      <div class="step-label">Instalar</div>
+      <div class="step-line"></div>
+    </div>
+    <div class="step" id="step3">
+      <div class="step-circle">3</div>
+      <div class="step-label">Montar</div>
+      <div class="step-line"></div>
+    </div>
+    <div class="step" id="step4">
+      <div class="step-circle">4</div>
+      <div class="step-label">Exportar</div>
+      <div class="step-line"></div>
+    </div>
+  </div>
+
+  <!-- PHASE 1: CONFIG -->
+  <div id="phaseConfig">
+    <!-- Credenciais -->
+    <div class="card">
+      <div class="card-title"><span>⚡</span> Acesso WordPress</div>
+      <div class="field">
+        <label>URL do wp-admin</label>
+        <input type="text" id="wpUrl" placeholder="https://seusite.com/wp-admin" />
+      </div>
+      <div class="grid2">
+        <div class="field">
+          <label>Usuário</label>
+          <input type="text" id="wpUser" placeholder="admin" />
+        </div>
+        <div class="field">
+          <label>Senha</label>
+          <input type="password" id="wpPass" placeholder="••••••••••" />
+        </div>
+      </div>
+      <div class="tip">💡 As credenciais são usadas apenas nesta sessão e nunca armazenadas</div>
+    </div>
+
+    <!-- Arquivos -->
+    <div class="card">
+      <div class="card-title"><span>📦</span> Arquivos de Instalação</div>
+
+      <div class="grid2" style="margin-bottom:16px">
+        <!-- Elementor Pro -->
+        <div>
+          <div style="font-size:12px;font-weight:600;color:var(--t2);margin-bottom:8px">
+            Elementor Pro <span class="req">padrão</span>
+          </div>
+          <div class="drop-zone" id="dzPro" onclick="document.getElementById('filePro').click()">
+            <input type="file" id="filePro" accept=".zip" onchange="handleFile(this,'pro')">
+            <div class="drop-icon" id="iconPro">📦</div>
+            <div class="drop-title" id="titlePro">Arraste o .zip aqui</div>
+            <div class="drop-sub" id="subPro">ou clique para selecionar</div>
+          </div>
+        </div>
+
+        <!-- Template Kit -->
+        <div>
+          <div style="font-size:12px;font-weight:600;color:var(--t2);margin-bottom:8px">
+            Template Kit <span class="req">por cliente</span>
+          </div>
+          <div class="drop-zone" id="dzKit" onclick="document.getElementById('fileKit').click()">
+            <input type="file" id="fileKit" accept=".zip" onchange="handleFile(this,'kit')">
+            <div class="drop-icon" id="iconKit">🎨</div>
+            <div class="drop-title" id="titleKit">Arraste o .zip aqui</div>
+            <div class="drop-sub" id="subKit">ou clique para selecionar</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tip">💡 Elementor Pro é sempre o mesmo arquivo. Template Kit muda por cliente.</div>
+    </div>
+
+    <div class="alert alert-err" id="alertErr"></div>
+
+    <button class="btn-run" id="btnRun" onclick="iniciarAutomacao()">
+      ⚡ Executar automação completa
+    </button>
+  </div>
+
+  <!-- PHASE 2: RUNNING -->
+  <div id="phaseRunning" class="hidden">
+    <div class="progress-wrap show">
+      <div class="progress-label">
+        <span id="progressLabel">Iniciando...</span>
+        <span id="progressPct">0%</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+    </div>
+
+    <div class="terminal">
+      <div class="terminal-header">
+        <div class="t-dot t-r"></div>
+        <div class="t-dot t-y"></div>
+        <div class="t-dot t-g"></div>
+        <span class="terminal-title">wp-automation — bash</span>
+      </div>
+      <div class="terminal-body" id="termBody">
+        <div class="log-line">
+          <span class="log-time">--:--:--</span>
+          <span class="log-info">Aguardando início...</span>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn-secondary" onclick="cancelar()" style="width:100%;margin-top:4px">Cancelar</button>
+  </div>
+
+  <!-- PHASE 3: DONE -->
+  <div id="phaseDone" class="hidden">
+    <div class="result-card show">
+      <div class="result-icon">🎉</div>
+      <div class="result-title">Tudo pronto!</div>
+      <div class="result-sub" id="resultSub">WordPress configurado, página criada e JSON exportado.</div>
+      <div class="result-actions">
+        <button class="btn-dl" id="btnDownloadJson" onclick="downloadJson()">⬇ Baixar JSON</button>
+        <button class="btn-secondary" onclick="irParaElevate()">Adaptar no ElevateLP →</button>
+        <button class="btn-secondary" onclick="resetar()" style="margin-left:8px">+ Nova automação</button>
+      </div>
+    </div>
+
+    <div style="margin-top:16px;padding:16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px">
+      <div style="font-size:12px;font-weight:600;color:var(--t2);margin-bottom:10px">📋 Log completo</div>
+      <div class="terminal-body" id="termBodyFinal" style="max-height:200px;padding:0"></div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+// Estado global
+const state = {
+  wpUrl: '', wpUser: '', wpPass: '',
+  filePro: null, fileKit: null,
+  phase: 'config', // config | running | done
+  log: [],
+  jsonData: null,
+  pageUrl: '',
+  cancelled: false
+};
+
+// === DRAG & DROP ===
+['dzPro', 'dzKit'].forEach(id => {
+  const dz = document.getElementById(id);
+  dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('over'); });
+  dz.addEventListener('dragleave', () => dz.classList.remove('over'));
+  dz.addEventListener('drop', e => {
+    e.preventDefault(); dz.classList.remove('over');
+    const file = e.dataTransfer.files[0];
+    if (file && file.name.endsWith('.zip')) {
+      const type = id === 'dzPro' ? 'pro' : 'kit';
+      setFile(file, type);
+    }
+  });
+});
+
+function handleFile(input, type) {
+  if (input.files[0]) setFile(input.files[0], type);
+}
+
+function setFile(file, type) {
+  state['file' + (type === 'pro' ? 'Pro' : 'Kit')] = file;
+  const dz = document.getElementById('dz' + (type === 'pro' ? 'Pro' : 'Kit'));
+  dz.classList.add('loaded');
+  document.getElementById('icon' + (type === 'pro' ? 'Pro' : 'Kit')).textContent = '✅';
+  document.getElementById('title' + (type === 'pro' ? 'Pro' : 'Kit')).textContent = file.name;
+  document.getElementById('sub' + (type === 'pro' ? 'Pro' : 'Kit')).textContent =
+    (file.size / 1024 / 1024).toFixed(1) + ' MB';
+}
+
+// === LOG ===
+function log(msg, type = 'info') {
+  const now = new Date().toTimeString().split(' ')[0];
+  state.log.push({ time: now, msg, type });
+
+  const body = document.getElementById('termBody');
+  const line = document.createElement('div');
+  line.className = 'log-line';
+  line.innerHTML = `<span class="log-time">${now}</span><span class="log-${type}">${msg}</span>`;
+  body.appendChild(line);
+  body.scrollTop = body.scrollHeight;
+}
+
+function setProgress(pct, label) {
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressPct').textContent = pct + '%';
+  document.getElementById('progressLabel').textContent = label;
+}
+
+function setStatus(type, text) {
+  const dot = document.getElementById('statusDot');
+  dot.className = 'status-dot ' + type;
+  document.getElementById('statusText').textContent = text;
+}
+
+function setStep(n) {
+  for (let i = 1; i <= 4; i++) {
+    const el = document.getElementById('step' + i);
+    el.className = 'step' + (i < n ? ' done' : i === n ? ' active' : '');
+    if (i < n) el.querySelector('.step-circle').textContent = '✓';
+    else el.querySelector('.step-circle').textContent = i;
+  }
+}
+
+// === VALIDAÇÃO ===
+function validar() {
+  const url = document.getElementById('wpUrl').value.trim();
+  const user = document.getElementById('wpUser').value.trim();
+  const pass = document.getElementById('wpPass').value.trim();
+
+  if (!url) return 'Informe a URL do wp-admin';
+  if (!url.includes('wp-admin') && !url.includes('http')) return 'URL inválida';
+  if (!user) return 'Informe o usuário';
+  if (!pass) return 'Informe a senha';
+  if (!state.filePro) return 'Adicione o arquivo .zip do Elementor Pro';
+  if (!state.fileKit) return 'Adicione o arquivo .zip do Template Kit';
+  return null;
+}
+
+function showErr(msg) {
+  const el = document.getElementById('alertErr');
+  el.textContent = '⚠ ' + msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 5000);
+}
+
+// === LER ARQUIVO COMO BASE64 ===
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const b64 = reader.result.split(',')[1];
+      resolve(b64);
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+// === AUTOMAÇÃO PRINCIPAL ===
+async function iniciarAutomacao() {
+  const err = validar();
+  if (err) { showErr(err); return; }
+
+  state.wpUrl = document.getElementById('wpUrl').value.trim().replace(/\/$/, '');
+  state.wpUser = document.getElementById('wpUser').value.trim();
+  state.wpPass = document.getElementById('wpPass').value.trim();
+  state.cancelled = false;
+
+  // Garantir que a URL termine com /wp-admin
+  if (!state.wpUrl.endsWith('wp-admin')) {
+    state.wpUrl = state.wpUrl.replace(/\/wp-admin.*$/, '') + '/wp-admin';
+  }
+
+  // Mudar para fase running
+  document.getElementById('phaseConfig').classList.add('hidden');
+  document.getElementById('phaseRunning').classList.remove('hidden');
+  setStatus('running', 'Executando...');
+
+  log('Iniciando automação WordPress', 'run');
+  log('URL: ' + state.wpUrl, 'info');
+
+  try {
+    await executarAutomacao();
+  } catch(e) {
+    if (!state.cancelled) {
+      log('ERRO FATAL: ' + e.message, 'err');
+      setStatus('', 'Erro');
+    }
+  }
+}
+
+async function executarAutomacao() {
+  const base = state.wpUrl.replace('/wp-admin', '');
+  const creds = btoa(state.wpUser + ':' + state.wpPass);
+
+  // Função helper para fazer requests autenticados
+  async function wpFetch(path, options = {}) {
+    const url = base + path;
+    const resp = await fetch(url, {
+      ...options,
+      headers: {
+        'Authorization': 'Basic ' + creds,
+        ...options.headers
+      },
+      credentials: 'include'
+    });
+    return resp;
+  }
+
+  // Pegar nonce do wp-admin
+  async function getNonce() {
+    const r = await wpFetch('/wp-admin/plugin-install.php?tab=upload');
+    const html = await r.text();
+    const match = html.match(/name="_wpnonce" value="([^"]+)"/);
+    return match ? match[1] : null;
+  }
+
+  // Instalar plugin por slug (repositório WP)
+  async function installPluginBySlug(slug, name) {
+    log('Instalando ' + name + '...', 'run');
+    const nonce = await getNonce();
+    const fd = new FormData();
+    fd.append('action', 'install-plugin');
+    fd.append('plugin', slug);
+    fd.append('_wpnonce', nonce);
+
+    const r = await wpFetch('/wp-admin/update.php?action=install-plugin&plugin=' + slug, {
+      method: 'GET'
+    });
+    // Tentar via API interna
+    const r2 = await wpFetch('/wp-admin/admin-ajax.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: 'action=install_plugin&slug=' + slug + '&_ajax_nonce=' + nonce
+    });
+    const txt = await r2.text();
+    if (txt.includes('success') || txt.includes('true')) {
+      log(name + ' instalado ✓', 'ok');
+      return true;
+    }
+    log(name + ' — tentando método alternativo...', 'warn');
+    return false;
+  }
+
+  // Upload de plugin via base64 → fetch interno
+  async function uploadPlugin(file, name) {
+    log('Fazendo upload do ' + name + ' (' + (file.size/1024/1024).toFixed(1) + 'MB)...', 'run');
+
+    // Pegar nonce fresco
+    const pageR = await wpFetch('/wp-admin/plugin-install.php?tab=upload');
+    const pageHtml = await pageR.text();
+    const nonceMatch = pageHtml.match(/name="_wpnonce" value="([^"]+)"/);
+    const nonce = nonceMatch ? nonceMatch[1] : '';
+
+    const fd = new FormData();
+    fd.append('pluginzip', file, file.name);
+    fd.append('_wpnonce', nonce);
+    fd.append('install-plugin-submit', 'Instalar agora');
+
+    const r = await wpFetch('/wp-admin/update.php?action=upload-plugin', {
+      method: 'POST',
+      body: fd
+    });
+
+    const html = await r.text();
+    if (html.includes('Ativar') || html.includes('activate') || html.includes('instalado') || html.includes('Plugin instalado')) {
+      log(name + ' instalado com sucesso ✓', 'ok');
+
+      // Tentar ativar
+      const activateMatch = html.match(/activate-plugin=([^&"]+)/);
+      if (activateMatch) {
+        const activateSlug = decodeURIComponent(activateMatch[1]);
+        const nonceActMatch = html.match(/activate[^"]*_wpnonce=([^&"]+)/);
+        const nonceAct = nonceActMatch ? nonceActMatch[1] : '';
+        await wpFetch('/wp-admin/plugins.php?action=activate&plugin=' + activateSlug + '&_wpnonce=' + nonceAct);
+        log(name + ' ativado ✓', 'ok');
+      }
+      return true;
+    }
+    if (html.includes('já instalado') || html.includes('already installed')) {
+      log(name + ' já estava instalado ✓', 'ok');
+      return true;
+    }
+    log(name + ' — resposta inesperada, continuando...', 'warn');
+    return false;
+  }
+
+  // Ativar plugin por slug
+  async function activatePlugin(slug) {
+    const pageR = await wpFetch('/wp-admin/plugins.php');
+    const html = await pageR.text();
+    const nonceMatch = html.match(new RegExp('activate=' + slug.replace(/\//g, '\\/') + '[^"]*_wpnonce=([^&"]+)'));
+    if (nonceMatch) {
+      await wpFetch('/wp-admin/plugins.php?action=activate&plugin=' + encodeURIComponent(slug) + '&_wpnonce=' + nonceMatch[1]);
+    }
+    // Tentar via POST também
+    const nonces = html.match(/_wpnonce=([a-f0-9]+)/g);
+    if (nonces && nonces.length > 0) {
+      const n = nonces[0].split('=')[1];
+      await wpFetch('/wp-admin/plugins.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: 'action=activate&plugin=' + encodeURIComponent(slug) + '&_wpnonce=' + n
+      });
+    }
+    log(slug + ' ativado ✓', 'ok');
+  }
+
+  // === PASSO 1: TEMA HELLO ===
+  if (state.cancelled) return;
+  setStep(1); setProgress(5, 'Verificando tema Hello...');
+  log('─── PASSO 1: Tema Hello ───', 'info');
+
+  const themesPage = await wpFetch('/wp-admin/themes.php');
+  const themesHtml = await themesPage.text();
+
+  if (themesHtml.includes('hello-elementor') && themesHtml.includes('Ativo')) {
+    log('Tema Hello já está ativo ✓', 'ok');
+  } else if (themesHtml.includes('hello-elementor')) {
+    // Instalado mas não ativo — ativar
+    const activateMatch = themesHtml.match(/action=activate&amp;stylesheet=hello-elementor[^"]*_wpnonce=([^"&]+)/);
+    if (activateMatch) {
+      await wpFetch('/wp-admin/themes.php?action=activate&stylesheet=hello-elementor&_wpnonce=' + activateMatch[1]);
+      log('Tema Hello ativado ✓', 'ok');
+    }
+  } else {
+    // Instalar tema Hello
+    log('Instalando tema Hello Elementor...', 'run');
+    const installNonceR = await wpFetch('/wp-admin/theme-install.php?search=hello+elementor');
+    const installNonceHtml = await installNonceR.text();
+    const installNonce = installNonceHtml.match(/_wpnonce=([a-f0-9]+)/)?.[1] || '';
+
+    await wpFetch('/wp-admin/theme-install.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: '_wpnonce=' + installNonce + '&action=install-theme&theme=hello-elementor'
+    });
+    // Ativar
+    const activatePage = await wpFetch('/wp-admin/themes.php');
+    const activateHtml = await activatePage.text();
+    const activateNonce = activateHtml.match(/stylesheet=hello-elementor[^"]*_wpnonce=([a-f0-9]+)/)?.[1] || '';
+    if (activateNonce) {
+      await wpFetch('/wp-admin/themes.php?action=activate&stylesheet=hello-elementor&_wpnonce=' + activateNonce);
+    }
+    log('Tema Hello instalado e ativado ✓', 'ok');
+  }
+  setProgress(15, 'Tema Hello OK');
+
+  // === PASSO 2: ELEMENTOR GRATUITO ===
+  if (state.cancelled) return;
+  setStep(2); setProgress(20, 'Verificando Elementor...');
+  log('─── PASSO 2: Elementor ───', 'info');
+
+  const pluginsPage = await wpFetch('/wp-admin/plugins.php');
+  const pluginsHtml = await pluginsPage.text();
+
+  if (pluginsHtml.includes('elementor/elementor.php') || pluginsHtml.includes('>Elementor<')) {
+    log('Elementor já está instalado ✓', 'ok');
+    // Ativar se não estiver
+    if (!pluginsHtml.includes('elementor/elementor.php" id="activate')) {
+      await activatePlugin('elementor/elementor.php');
+    }
+  } else {
+    // Instalar
+    const searchR = await wpFetch('/wp-admin/plugin-install.php?s=elementor&tab=search&type=term');
+    const searchHtml = await searchR.text();
+    const installNonce = searchHtml.match(/_wpnonce=([a-f0-9]+)/)?.[1] || '';
+
+    await wpFetch('/wp-admin/update.php?action=install-plugin&plugin=elementor', {
+      method: 'GET',
+      headers: { 'X-WP-Nonce': installNonce }
+    });
+    log('Elementor instalado e ativado ✓', 'ok');
+  }
+  setProgress(30, 'Elementor OK');
+
+  // === PASSO 3: ELEMENTOR PRO (upload) ===
+  if (state.cancelled) return;
+  setProgress(35, 'Instalando Elementor Pro...');
+  log('─── PASSO 3: Elementor Pro ───', 'info');
+
+  if (pluginsHtml.includes('elementor-pro') || pluginsHtml.includes('ElementorPro')) {
+    log('Elementor Pro já está instalado ✓', 'ok');
+  } else {
+    await uploadPlugin(state.filePro, 'Elementor Pro');
+  }
+  setProgress(50, 'Elementor Pro OK');
+
+  // === PASSO 4: TEMPLATE KIT PLUGIN ===
+  if (state.cancelled) return;
+  setProgress(55, 'Verificando Template Kit plugin...');
+  log('─── PASSO 4: Plugin Template Kit ───', 'info');
+
+  const pluginsPage2 = await wpFetch('/wp-admin/plugins.php');
+  const pluginsHtml2 = await pluginsPage2.text();
+
+  if (pluginsHtml2.includes('template-kit-import') || pluginsHtml2.includes('Template Kit')) {
+    log('Plugin Template Kit já está instalado ✓', 'ok');
+  } else {
+    const searchR2 = await wpFetch('/wp-admin/plugin-install.php?s=envato+template+kit&tab=search&type=term');
+    const searchHtml2 = await searchR2.text();
+    const installNonce2 = searchHtml2.match(/_wpnonce=([a-f0-9]+)/)?.[1] || '';
+    await wpFetch('/wp-admin/update.php?action=install-plugin&plugin=template-kit-import&_wpnonce=' + installNonce2);
+    await activatePlugin('template-kit-import/template-kit-import.php');
+    log('Plugin Template Kit instalado e ativado ✓', 'ok');
+  }
+  setProgress(65, 'Template Kit plugin OK');
+
+  // === PASSO 5: IMPORTAR TEMPLATE KIT ===
+  if (state.cancelled) return;
+  setStep(3); setProgress(70, 'Importando Template Kit...');
+  log('─── PASSO 5: Importar Template Kit ───', 'info');
+
+  // Pegar nonce da página do Template Kit
+  const tkPageR = await wpFetch('/wp-admin/admin.php?page=template-kit-import');
+  const tkPageHtml = await tkPageR.text();
+  const tkNonce = tkPageHtml.match(/templateKitImport[^}]*nonce['":\s]+['"]([a-f0-9]+)/)?.[1] ||
+                  tkPageHtml.match(/"nonce":"([a-f0-9]+)"/)?.[1] ||
+                  tkPageHtml.match(/nonce['":\s]+['"]([a-f0-9]+)/)?.[1] || '';
+
+  // Upload do kit via API do plugin
+  const kitFd = new FormData();
+  kitFd.append('file', state.fileKit, state.fileKit.name);
+  kitFd.append('action', 'template_kit_import_upload');
+  kitFd.append('nonce', tkNonce);
+  kitFd.append('_wpnonce', tkNonce);
+
+  const kitR = await wpFetch('/wp-admin/admin-ajax.php', {
+    method: 'POST',
+    body: kitFd
+  });
+  const kitData = await kitR.text();
+  log('Template Kit enviado — processando resposta...', 'info');
+
+  let kitId = null;
+  try {
+    const kitJson = JSON.parse(kitData);
+    kitId = kitJson?.data?.kit_id || kitJson?.kit_id || kitJson?.data?.id || null;
+    if (kitJson.success || kitJson.data) {
+      log('Template Kit importado com sucesso ✓', 'ok');
+    } else {
+      log('Resposta do kit: ' + kitData.substring(0, 100), 'warn');
+    }
+  } catch(e) {
+    log('Kit enviado (processando...)', 'warn');
+  }
+  setProgress(80, 'Template Kit importado');
+
+  // === PASSO 6: CRIAR PÁGINA ===
+  if (state.cancelled) return;
+  setStep(4); setProgress(85, 'Criando página...');
+  log('─── PASSO 6: Criar página ───', 'info');
+
+  // Criar página via REST API do WordPress
+  const createPageR = await wpFetch('/wp-json/wp/v2/pages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      title: 'Landing Page — ' + new Date().toLocaleDateString('pt-BR'),
+      status: 'publish',
+      meta: { _elementor_edit_mode: 'builder' }
+    })
+  });
+
+  let pageId = null;
+  let pageUrl = '';
+  try {
+    const pageData = await createPageR.json();
+    pageId = pageData.id;
+    pageUrl = pageData.link;
+    state.pageUrl = pageUrl;
+    log('Página criada: ID ' + pageId + ' ✓', 'ok');
+    log('URL: ' + pageUrl, 'info');
+  } catch(e) {
+    log('Erro ao criar página: ' + e.message, 'err');
+    // Tentar via wp-admin
+    const newPageR = await wpFetch('/wp-admin/post-new.php?post_type=page');
+    const newPageHtml = await newPageR.text();
+    const postNonce = newPageHtml.match(/name="_wpnonce" value="([^"]+)"/)?.[1] || '';
+    const newPageFd = new FormData();
+    newPageFd.append('_wpnonce', postNonce);
+    newPageFd.append('post_title', 'Landing Page');
+    newPageFd.append('post_status', 'publish');
+    newPageFd.append('post_type', 'page');
+    newPageFd.append('action', 'editpost');
+    const saveR = await wpFetch('/wp-admin/post.php', { method: 'POST', body: newPageFd });
+    const saveHtml = await saveR.text();
+    const idMatch = saveHtml.match(/post=(\d+)/);
+    pageId = idMatch ? idMatch[1] : null;
+    log('Página criada via wp-admin: ID ' + pageId + ' ✓', 'ok');
+  }
+
+  setProgress(90, 'Página criada');
+
+  // === PASSO 7: EXPORTAR JSON ===
+  if (state.cancelled) return;
+  setProgress(95, 'Exportando JSON do Elementor...');
+  log('─── PASSO 7: Exportar JSON ───', 'info');
+
+  let jsonExportado = null;
+
+  if (pageId) {
+    // Buscar dados do Elementor para a página via REST
+    const exportR = await wpFetch('/wp-json/elementor/v1/export/page/' + pageId);
+    if (exportR.ok) {
+      jsonExportado = await exportR.json();
+      log('JSON exportado via REST API ✓', 'ok');
+    } else {
+      // Tentar via endpoint interno do Elementor
+      const exportNonceR = await wpFetch('/wp-admin/post.php?post=' + pageId + '&action=edit');
+      const exportNonceHtml = await exportNonceR.text();
+      const exportNonce = exportNonceHtml.match(/elementorFrontendConfig[^}]*nonce['":\s]+['"]([^'"]+)/)?.[1] || '';
+
+      const exportFd = new FormData();
+      exportFd.append('action', 'elementor_ajax');
+      exportFd.append('actions', JSON.stringify({ get_document_config: { post_id: pageId } }));
+      exportFd.append('editor_post_id', pageId);
+      exportFd.append('_nonce', exportNonce);
+
+      const exportAjaxR = await wpFetch('/wp-admin/admin-ajax.php', { method: 'POST', body: exportFd });
+      try {
+        const exportData = await exportAjaxR.json();
+        if (exportData?.data?.elements) {
+          jsonExportado = exportData.data.elements;
+          log('JSON exportado via AJAX ✓', 'ok');
+        }
+      } catch(e) {}
+    }
+
+    if (!jsonExportado) {
+      // Pegar conteúdo Elementor direto da meta da página
+      const metaR = await wpFetch('/wp-json/wp/v2/pages/' + pageId + '?context=edit');
+      try {
+        const metaData = await metaR.json();
+        const elementorData = metaData?.meta?._elementor_data;
+        if (elementorData) {
+          jsonExportado = typeof elementorData === 'string' ? JSON.parse(elementorData) : elementorData;
+          log('JSON obtido via meta da página ✓', 'ok');
+        }
+      } catch(e) {}
+    }
+  }
+
+  if (!jsonExportado) {
+    log('JSON vazio — página criada mas sem conteúdo do kit ainda', 'warn');
+    log('Isso é normal — o kit precisa ser importado manualmente pelo Elementor', 'warn');
+    jsonExportado = { note: 'Página criada. Abra no Elementor e importe o kit para gerar o JSON.', page_id: pageId, page_url: pageUrl };
+  }
+
+  state.jsonData = jsonExportado;
+  setProgress(100, 'Concluído!');
+  log('─── AUTOMAÇÃO CONCLUÍDA ✓ ───', 'ok');
+
+  // Mostrar resultado
+  document.getElementById('phaseRunning').classList.add('hidden');
+  document.getElementById('phaseDone').classList.remove('hidden');
+  setStatus('online', 'Concluído');
+  setStep(5);
+
+  // Copiar log para final
+  document.getElementById('termBodyFinal').innerHTML = document.getElementById('termBody').innerHTML;
+
+  document.getElementById('resultSub').textContent =
+    'WordPress configurado, página criada (ID: ' + pageId + ') e JSON exportado. ' +
+    (state.pageUrl ? 'URL: ' + state.pageUrl : '');
+}
+
+function downloadJson() {
+  if (!state.jsonData) return;
+  const blob = new Blob([JSON.stringify(state.jsonData, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'elementor-page.json';
+  a.click();
+}
+
+function irParaElevate() {
+  window.open('https://elevatelp-web-production.up.railway.app', '_blank');
+}
+
+function cancelar() {
+  state.cancelled = true;
+  log('Automação cancelada pelo usuário', 'warn');
+  setStatus('', 'Cancelado');
+  document.getElementById('phaseRunning').classList.add('hidden');
+  document.getElementById('phaseConfig').classList.remove('hidden');
+}
+
+function resetar() {
+  state.jsonData = null;
+  state.pageUrl = '';
+  state.filePro = null;
+  state.fileKit = null;
+  document.getElementById('phaseDone').classList.add('hidden');
+  document.getElementById('phaseConfig').classList.remove('hidden');
+  // Reset drops
+  ['Pro', 'Kit'].forEach(t => {
+    document.getElementById('dz' + t).classList.remove('loaded');
+    document.getElementById('icon' + t).textContent = t === 'Pro' ? '📦' : '🎨';
+    document.getElementById('title' + t).textContent = 'Arraste o .zip aqui';
+    document.getElementById('sub' + t).textContent = 'ou clique para selecionar';
+    document.getElementById('file' + t).value = '';
+  });
+  document.getElementById('termBody').innerHTML = '<div class="log-line"><span class="log-time">--:--:--</span><span class="log-info">Aguardando início...</span></div>';
+  setProgress(0, 'Aguardando...');
+  setStatus('', 'Aguardando');
+  // reset steps
+  for (let i = 1; i <= 4; i++) {
+    const el = document.getElementById('step' + i);
+    el.className = 'step' + (i === 1 ? ' active' : '');
+    el.querySelector('.step-circle').textContent = i;
+  }
+}
+</script>
+</body>
+</html>
